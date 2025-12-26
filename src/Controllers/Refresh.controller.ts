@@ -1,6 +1,6 @@
 import jwt, { Secret } from "jsonwebtoken";
 import User from "../Models/auth/Signup.js";
-import { Request, Response } from "express";
+import { CookieOptions, Request, Response } from "express";
 import {
   hashToken,
   signAccessToken,
@@ -45,10 +45,10 @@ export const RefreshTokenController = async (req: Request, res: Response) => {
       await user.save();
 
       const isProd = process.env.NODE_ENV === "production";
-      const cookieOptions = {
+      const cookieOptions: CookieOptions = {
         httpOnly: true,
-        secure: isProd,
-        sameSite: "lax" as "lax",
+        secure: isProd, // MUST be true in prod
+        sameSite: isProd ? "none" : "lax", // MUST be "none" in prod
       };
 
       res.cookie("access_token", accessToken, {

@@ -23,6 +23,7 @@ import {
   signRefreshToken,
 } from "../utils/auth.utils.js";
 dotenv.config();
+import { CookieOptions } from "express";
 
 const SignupController = async (
   req: Request<{}, {}, SignupRequestBody>,
@@ -70,10 +71,10 @@ const SignupController = async (
 
     // Cookie options
     const isProd = process.env.NODE_ENV === "production";
-    const cookieOptions = {
-      secure: isProd,
+    const cookieOptions: CookieOptions = {
       httpOnly: true,
-      sameSite: "lax" as "lax",
+      secure: isProd, // MUST be true in prod
+      sameSite: isProd ? "none" : "lax", // MUST be "none" in prod
     };
 
     res.cookie("access_token", accessToken, {
@@ -133,10 +134,10 @@ const LoginController = async (
 
     // Cookie options
     const isProd = process.env.NODE_ENV === "production";
-    const cookieOptions = {
+    const cookieOptions: CookieOptions = {
       httpOnly: true,
-      secure: isProd,
-      sameSite: "lax" as "lax",
+      secure: isProd, // MUST be true in prod
+      sameSite: isProd ? "none" : "lax", // MUST be "none" in prod
     };
 
     // Set cookies
