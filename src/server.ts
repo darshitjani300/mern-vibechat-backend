@@ -14,10 +14,15 @@ import Message from "./Models/Message.js";
 const app = express();
 configDotenv();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://mern-vibechat.vercel.app", // your frontend domain
+];
+
 app.use(express.json());
 app.use(
   cors({
-    origin: "*",
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
