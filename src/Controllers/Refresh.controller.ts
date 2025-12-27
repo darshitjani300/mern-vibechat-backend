@@ -12,6 +12,9 @@ export const RefreshTokenController = async (req: Request, res: Response) => {
 
   try {
     const token = req.cookies?.refresh_token;
+
+    console.log("Refresh token received:", token);
+
     if (!token) {
       return res.status(401).json({ message: "No refresh token Outer" });
     }

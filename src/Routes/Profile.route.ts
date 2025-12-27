@@ -3,7 +3,7 @@ import requireAuth from "../utils/verifyToken.js";
 import {
   GetProfileController,
   ProfileController,
-  GetAllProfileController,
+  GetPeopleController,
 } from "../Controllers/Profile.controller.js";
 import upload from "../utils/multer.js";
 
@@ -17,6 +17,6 @@ router.post(
 );
 
 router.get("/getProfile", requireAuth, GetProfileController);
-router.get("/getAllProfile", requireAuth, GetAllProfileController);
+router.get("/getPeople", requireAuth, GetPeopleController);
 
 export default router;

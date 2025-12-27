@@ -111,6 +111,8 @@ const LoginController = async (
   try {
     const { email, password } = req.body;
 
+    console.log("HELLO");
+
     if (!email || !password) {
       return res.status(400).json({ message: "All the fields are required" });
     }
@@ -150,7 +152,7 @@ const LoginController = async (
     // --> refresh token second
     res.cookie("refresh_token", refreshToken, {
       ...cookieOptions,
-      maxAge: 1 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 1 * 24 * 60 * 60 * 1000, // 1 days
     });
 
     return res.status(200).json({
@@ -271,6 +273,8 @@ const LogoutController = async (req: Request, res: Response) => {
   try {
     const token = req.cookies?.refresh_token;
 
+    console.log("Logout token received:", token);
+
     if (token) {
       try {
         const payload: any = jwt.verify(
@@ -286,8 +290,15 @@ const LogoutController = async (req: Request, res: Response) => {
       }
     }
 
-    res.clearCookie("access_token");
-    res.clearCookie("refresh_token");
+    const isProd = process.env.NODE_ENV === "production";
+    const cookieOptions: CookieOptions = {
+      httpOnly: true,
+      secure: isProd, // MUST be true in prod
+      sameSite: isProd ? "none" : "lax", // MUST be "none" in prod
+    };
+
+    res.clearCookie("access_token", cookieOptions);
+    res.clearCookie("refresh_token", cookieOptions);
 
     return res.status(200).json({ message: "Logged out", status: true });
   } catch (error) {
@@ -315,7 +326,7 @@ const CheckAuthController = async (req: Request, res: Response) => {
     const user = await User.findById(payload.userId).select(
       "_id email username"
     );
-    if (!user) return res.status(401).json({ message: "User not found" });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     return res.status(200).json({
       user: {

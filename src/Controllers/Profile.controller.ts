@@ -92,7 +92,7 @@ export const GetProfileController = async (req: Request, res: Response) => {
   }
 };
 
-export const GetAllProfileController = async (req: Request, res: Response) => {
+export const GetPeopleController = async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
     if (!user || !user.userId) {
