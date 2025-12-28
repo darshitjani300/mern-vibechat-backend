@@ -29,12 +29,19 @@ const profileModel = new mongoose.Schema<IProfile>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
       required: true,
+      unique: true,
+      index: true,
     },
     name: {
       type: String,
+      trim: true,
+      minLength: 3,
+      maxLength: 30,
     },
     about: {
       type: String,
+      minLength: 1,
+      maxLength: 120,
     },
     picture: {
       type: profileImageSchema,

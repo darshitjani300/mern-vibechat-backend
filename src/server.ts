@@ -20,7 +20,7 @@ const allowedOrigins = [
   "https://mern-vibechat.vercel.app", // your frontend domain
 ];
 
-app.use(express.json());
+app.use(express.json({ limit: "10kb" }));
 app.use(
   cors({
     origin: allowedOrigins,

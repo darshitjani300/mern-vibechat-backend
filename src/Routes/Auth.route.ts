@@ -10,11 +10,22 @@ import {
 import validateSchema from "../middlewares/validator.js";
 import { loginSchema, registerSchema } from "../validators/auth.schema.js";
 import { RefreshTokenController } from "../Controllers/Refresh.controller.js";
+import { authLimiter } from "../middlewares/rateLimit.js";
 
 const router: Router = express.Router();
 
-router.post("/signup", validateSchema(registerSchema), SignupController);
-router.post("/login", validateSchema(loginSchema), LoginController);
+router.post(
+  "/signup",
+  authLimiter,
+  validateSchema(registerSchema),
+  SignupController
+);
+router.post(
+  "/login",
+  authLimiter,
+  validateSchema(loginSchema),
+  LoginController
+);
 router.post("/forgotPassword", ForgotPassword);
 router.post("/resetPassword", ResetPassword);
 router.post("/refresh", RefreshTokenController);

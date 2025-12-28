@@ -3,7 +3,7 @@ import Profile, { IProfilePicture } from "../Models/Profile.js";
 import uploadToCloudinary from "../middlewares/uploadToCloudinary.js";
 import cloudinary from "../config/cloudinary.js";
 
-type Iuser = {
+type IProfile = {
   name?: String;
   about?: String;
   picture?: IProfilePicture;
@@ -19,14 +19,20 @@ export const ProfileController = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "User is not authenticated" });
     }
 
-    const updatedUser: Iuser = {};
+    const updatedProfile: IProfile = {};
 
-    if (typeof name === "string" && name.trim() !== "") {
-      updatedUser.name = name.trim();
+    if (typeof name === "string") {
+      const trimmed = name.trim();
+      if (trimmed.length >= 3 && trimmed.length <= 30) {
+        updatedProfile.name = trimmed;
+      }
     }
 
-    if (typeof about === "string" && about.trim() !== "") {
-      updatedUser.about = about.trim();
+    if (typeof about === "string") {
+      const trimmed = about.trim();
+      if (trimmed.length >= 1 && trimmed.length <= 120) {
+        updatedProfile.about = trimmed;
+      }
     }
 
     if (file) {
@@ -42,13 +48,13 @@ export const ProfileController = async (req: Request, res: Response) => {
         await cloudinary.uploader.destroy(existingProfile?.picture?.public_id);
       }
 
-      updatedUser.picture = {
+      updatedProfile.picture = {
         url: uploadResult?.secure_url,
         public_id: uploadResult?.public_id,
       };
     }
 
-    if (Object.keys(updatedUser).length == 0) {
+    if (Object.keys(updatedProfile).length == 0) {
       return res.status(400).json({
         message: "At least one of name, about or picture is required.",
       });
@@ -57,7 +63,7 @@ export const ProfileController = async (req: Request, res: Response) => {
     const profile = await Profile.findOneAndUpdate(
       { userId: user.userId },
       {
-        $set: updatedUser,
+        $set: updatedProfile,
       },
       {
         new: true,

@@ -25,18 +25,15 @@ import {
 dotenv.config();
 import { CookieOptions } from "express";
 
+const DUMMY_HASH =
+  "$2b$10$CwTycUXWue0Thq9StjUM0uJ8eUu9VjA36Kp9z3Z6EJpKkYjJ8WJgG";
+
 const SignupController = async (
   req: Request<{}, {}, SignupRequestBody>,
   res: Response<SignupResponseBody>
 ) => {
   try {
     const { username, email, password } = req.body;
-
-    if (!username || !email || !password) {
-      return res
-        ?.status(400)
-        ?.json({ message: "All the fields are required." });
-    }
 
     const userExist = await User?.findOne({ email });
     if (userExist) {
@@ -111,8 +108,6 @@ const LoginController = async (
   try {
     const { email, password } = req.body;
 
-    console.log("HELLO");
-
     if (!email || !password) {
       return res.status(400).json({ message: "All the fields are required" });
     }
@@ -123,7 +118,10 @@ const LoginController = async (
     }
 
     //compare password.
-    const validPassword = await bcrypt.compare(password, existUser.password);
+    const validPassword = await bcrypt.compare(
+      password,
+      existUser?.password || DUMMY_HASH
+    );
     if (!validPassword) {
       return res.status(409).json({ message: "Enter valid password" });
     }
@@ -142,8 +140,7 @@ const LoginController = async (
       sameSite: isProd ? "none" : "lax", // MUST be "none" in prod
     };
 
-    // Set cookies
-    // --> access token first
+    // Set cookies  // --> access token first
     res.cookie("access_token", accessToken, {
       ...cookieOptions,
       maxAge: 1 * 60 * 60 * 1000, // 1 hour
@@ -272,8 +269,6 @@ const ResetPassword = async (
 const LogoutController = async (req: Request, res: Response) => {
   try {
     const token = req.cookies?.refresh_token;
-
-    console.log("Logout token received:", token);
 
     if (token) {
       try {

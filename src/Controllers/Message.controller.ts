@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
 import Message from "../Models/Message.js";
+import mongoose from "mongoose";
 
 export const GetMessageController = async (req: Request, res: Response) => {
   try {
     const myId = (req as any).user;
-    const otherId = req.params.otherUserId;
+    const otherId = req.params?.otherUserId;
 
     if (!myId.userId || !otherId) {
-      return res.status(404).json({ message: "Id or userId not found" });
+      return res.status(400).json({ message: "Invalid request" });
     }
 
     const messages = await Message.find({
@@ -15,7 +16,9 @@ export const GetMessageController = async (req: Request, res: Response) => {
         { sender: myId.userId, receiver: otherId },
         { sender: otherId, receiver: myId.userId },
       ],
-    }).sort({ createdAt: 1 });
+    })
+      .sort({ createdAt: 1 })
+      .limit(500);
 
     return res.status(200).json({ message: "Success", messages });
   } catch (error) {

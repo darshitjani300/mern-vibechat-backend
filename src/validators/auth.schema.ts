@@ -12,9 +12,11 @@ interface ILogin {
 }
 
 const registerSchema = Joi.object<IRegister>({
-  username: Joi.string().min(3).max(30).required(),
-  email: Joi.string().email().required(),
+  username: Joi.string().min(3).max(30).trim().required(),
+  email: Joi.string().email().lowercase().trim().required(),
   password: Joi.string()
+    .min(8)
+    .max(64)
     .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/)
     .required(),
 }).messages({
