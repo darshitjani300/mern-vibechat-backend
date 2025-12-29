@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import Message from "../Models/Message.js";
-import mongoose from "mongoose";
 
 export const GetMessageController = async (req: Request, res: Response) => {
   try {

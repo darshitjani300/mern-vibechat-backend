@@ -55,6 +55,16 @@ io.on("connection", (socket: any) => {
     try {
       const from = socket.userId;
 
+      if (!from || !to || !text) {
+        return socket.emit("error_message", { message: "Invalid data" });
+      }
+
+      if (text.length > 1000) {
+        return socket.emit("error_message", {
+          message: "Message is too long (max 1000 characters only)",
+        });
+      }
+
       const msg = await Message.create({
         sender: from,
         receiver: to,

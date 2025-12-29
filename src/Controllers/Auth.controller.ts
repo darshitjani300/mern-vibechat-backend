@@ -277,9 +277,12 @@ const LogoutController = async (req: Request, res: Response) => {
           process.env.REFRESH_TOKEN_SECRET as Secret
         );
 
-        await User.findOneAndUpdate(payload.userId, {
-          $unset: { refreshToken: null },
-        });
+        await User.findOneAndUpdate(
+          { _id: payload.userId },
+          {
+            $unset: { refreshToken: null },
+          }
+        );
       } catch (error) {
         console.log("Error verifying token:", error);
       }
