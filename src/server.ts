@@ -17,7 +17,7 @@ configDotenv();
 const allowedOrigins = [
   "http://localhost:5173", // your local domain
   "http://localhost:4173", // another local-testing domain
-  "https://mern-vibechat.vercel.app", // your frontend domain
+  "https://pingxo.vercel.app",
 ];
 
 app.use(express.json({ limit: "10kb" }));
