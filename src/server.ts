@@ -15,8 +15,9 @@ const app = express();
 configDotenv();
 
 const allowedOrigins = [
-  "http://localhost:5173", // your local domain
-  "http://localhost:4173", // another local-testing domain
+  "http://localhost:5173",
+  "http://localhost:4173",
+  "http://192.168.29.106:5173",
   "https://pingxo.vercel.app",
 ];
 
@@ -35,13 +36,13 @@ app.use("/images", express.static("public/images"));
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST"],
   },
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = parseInt(process.env.PORT || "3000", 10);
 
 connectDB();
 
@@ -96,6 +97,6 @@ app.get("/", (_req: Request, res: Response) => {
   res.send("✅ Server is running fine");
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on port http://localhost:${PORT}`);
 });
